@@ -1,0 +1,80 @@
+{% extends 'recipes/base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">
+                        <i class="bi bi-plus-circle-fill"></i> Create New Recipe
+                    </h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Recipe Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category *</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">-- Select Category --</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if user.is_staff %}
+                            <small class="form-text text-muted">
+                                Don't see your category? <a href="/admin/recipes/category/add/" target="_blank">Add new category</a>
+                            </small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ingredients" class="form-label">Ingredients (one per line) *</label>
+                            <textarea class="form-control" id="ingredients" name="ingredients" rows="6" required
+                                      placeholder="2 cups flour&#10;1 cup sugar&#10;3 eggs"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label">Instructions *</label>
+                            <textarea class="form-control" id="instructions" name="instructions" rows="6" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image_url" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="image_url" name="image_url"
+                                   placeholder="https://example.com/image.jpg">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="prep_time" class="form-label">Prep Time (mins)</label>
+                                <input type="number" class="form-control" id="prep_time" name="prep_time" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="cook_time" class="form-label">Cook Time (mins)</label>
+                                <input type="number" class="form-control" id="cook_time" name="cook_time" value="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="servings" class="form-label">Servings</label>
+                                <input type="number" class="form-control" id="servings" name="servings" value="1">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle"></i> Create Recipe
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'recipes/base.html' %}
+
+{% block content %}
+<div class="hero-section bg-light py-5">
+    <div class="container text-center">
+        <h1 class="display-4">Discover Amazing Recipes</h1>
+        <p class="lead">Browse our collection of delicious recipes from around the world</p>
+        
+        <!-- Search Bar -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <form method="get" action="{% url 'recipe_list' %}">
+                    <div class="input-group input-group-lg">
+                        <input type="text" class="form-control" name="search" 
+                               placeholder="Search recipes..." value="{{ search_query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Filter -->
+<div class="container my-4">
+    <div class="category-filter text-center">
+        <a href="{% url 'recipe_list' %}" class="btn btn-outline-primary {% if not selected_category %}active{% endif %}">
+            All Recipes
+        </a>
+        {% for category in categories %}
+            <a href="?category={{ category.slug }}" 
+               class="btn btn-outline-primary {% if selected_category == category.slug %}active{% endif %}">
+                {{ category.name }} ({{ category.recipes.count }})
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container my-5">
+    {% if search_query %}
+        <h4 class="mb-4">Search results for "{{ search_query }}" ({{ total_recipes }} found)</h4>
+    {% elif selected_category %}
+        <h4 class="mb-4">{{ selected_category|title }} Recipes ({{ total_recipes }})</h4>
+    {% else %}
+        <h4 class="mb-4">All Recipes ({{ total_recipes }})</h4>
+    {% endif %}
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for recipe in recipes %}
+        <div class="col">
+            <div class="card h-100 shadow-sm recipe-card">
+                <img src="{{ recipe.image_url|default:'https://via.placeholder.com/400x250' }}" 
+                     class="card-img-top" alt="{{ recipe.title }}">
+                <div class="card-body">
+                    {% if recipe.category %}
+                        <span class="badge bg-info mb-2">{{ recipe.category.name }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary mb-2">Uncategorized</span>
+                    {% endif %}
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text">{{ recipe.description|truncatewords:15 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-person"></i> {{ recipe.author.username }}
+                        </small>
+                        <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-primary btn-sm">
+                            View Recipe
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="bi bi-clock"></i> {{ recipe.get_total_time }} mins
+                        <i class="bi bi-people ms-2"></i> {{ recipe.servings }} servings
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search" style="font-size: 3rem; color: #ccc;"></i>
+            <p class="mt-3">No recipes found. Try a different search!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
